@@ -18,7 +18,7 @@ mongoose
   .catch((error) => console.log({ error }));
 
 const userRoutes = require('./routes/user');
-const shopRoutes = require('./routes/loan');
+const shopRoutes = require('./routes/order');
 const path = require('path');
 const auth = require('./middleware/auth');
 
