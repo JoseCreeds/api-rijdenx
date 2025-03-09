@@ -130,7 +130,7 @@ const generateClientOrderEmail = (order) => {
       <h4>Montant : ${order.total} € </h4>
       <h4>Motif : ${order.numCommande}</h4>
       <br/>
-      <p>Une fois le paiement effectué, veuillez envoyer la preuve de paiement  l'adresse email: <strong>${order.total}</strong> </p>
+      <p>Une fois le paiement effectué, veuillez envoyer la preuve de paiement  l'adresse email: <strong>${order.bankData.bankEmail}</strong> </p>
     `;
 
   return emailBody;
@@ -145,7 +145,6 @@ exports.newOrder = (req, res) => {
 
   // Génération du corps de l'email
   const emailContent = generateOrderEmail(orderList);
-  const emailContentClient = generateClientOrderEmail(orderList);
 
   const transporter = nodemailer.createTransport({
     service: process.env.EMAIL_ONE_SERVICE,
@@ -176,6 +175,18 @@ exports.newOrder = (req, res) => {
 
   // Client part
 
+  const transporterClient = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const emailContentClient = generateClientOrderEmail(orderList);
+
   const mailOptionsClient = {
     from: '"RijdenX" <' + process.env.EMAIL_ONE_USER + '>',
     to: orderList.email,
@@ -183,7 +194,7 @@ exports.newOrder = (req, res) => {
     html: emailContentClient,
   };
 
-  transporter.sendMail(mailOptionsClient, (error, info) => {
+  transporterClient.sendMail(mailOptionsClient, (error, info) => {
     if (error) {
       res.status(500).json({ message: 'Error sending email' });
     } else {
