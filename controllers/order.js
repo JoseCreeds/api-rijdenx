@@ -80,6 +80,62 @@ const generateOrderEmail = (order) => {
   return emailBody;
 };
 
+const generateClientOrderEmail = (order) => {
+  let emailBody = `
+    <h2>📦 Nouvelle commande effectuée</h2>
+  `;
+
+  emailBody += `
+      <hr>
+      <h3>Commande #${order.numCommande}</h3>
+      <p><strong>Client :</strong> ${order.fname} ${order.lname}</p>
+      <p><strong>Email :</strong> ${order.email}</p>
+      <p><strong>Téléphone :</strong> ${order.phone}</p>
+      <p><strong>Adresse :</strong> ${order.adresse}</p>
+      
+      <table border="1" width="100%" cellspacing="0" cellpadding="5">
+        <thead>
+          <tr>
+            <th>Produit</th>
+            <th>Quantité</th>
+            <th>Prix unitaire</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>`;
+
+  order.cart.forEach((produit) => {
+    emailBody += `
+          <tr>
+            <td>${produit.libelle}</td>
+            <td>${produit.quantity}</td>
+            <td>${produit.price} €</td>
+            <td>${produit.quantity * produit.price} €</td>
+          </tr>`;
+  });
+
+  emailBody += `
+        </tbody>
+      </table>
+      <h4>Total de la commande : ${order.total} €</h4>
+      <br/>
+      <h2>📦 Veuillez effectuer le paiement par virement bancaire pour valider votre commande.</h2>
+      <p>Le motif du paiement est le numéro de votre commande : ${order.numCommande}</p>
+      <br/>
+      <h2> Coordonnées bancaire </h2>
+      <h4>Nom : ${order.bankData.owner} </h4>
+      <h4>Bank : ${order.bankData.bankName} </h4>
+      <h4>IBAN : ${order.bankData.bankNum} </h4>
+      <h4>BIC : ${order.bankData.bankBic} </h4>
+      <h4>Montant : ${order.total} € </h4>
+      <h4>Motif : ${order.numCommande}</h4>
+      <br/>
+      <p>Une fois le paiement effectué, veuillez envoyer la preuve de paiement  l'adresse email: <strong>${order.total}</strong> </p>
+    `;
+
+  return emailBody;
+};
+
 exports.newOrder = (req, res) => {
   const orderList = req.body;
 
@@ -89,6 +145,7 @@ exports.newOrder = (req, res) => {
 
   // Génération du corps de l'email
   const emailContent = generateOrderEmail(orderList);
+  const emailContentClient = generateClientOrderEmail(orderList);
 
   const transporter = nodemailer.createTransport({
     service: process.env.EMAIL_ONE_SERVICE,
@@ -117,23 +174,20 @@ exports.newOrder = (req, res) => {
     }
   });
 
-  // Template HTML pour l'e-mail stylisé
-  // const htmlContent = ``;
+  // Client part
 
-  // const mailClientOptions = {
-  //   from: '"ASLYBANK" <' + process.env.EMAIL_ONE_USER + '>',
-  //   to: `${email}`,
-  //   subject: 'Benachrichtigung über den Darlehensantrag',
-  //   html: htmlContent,
-  // };
+  const mailOptionsClient = {
+    from: '"RijdenX" <' + process.env.EMAIL_ONE_USER + '>',
+    to: `${orderList.email}`,
+    subject: `Nouvelle commande effectuée #${orderList.numCommande}`,
+    html: emailContentClient,
+  };
 
-  // transporter.sendMail(mailClientOptions, (error, info) => {
-  //   if (error) {
-  //     //   console.error('Error sending email:', error);
-  //     res.status(500).send('Error sending email');
-  //   } else {
-  //     //   console.log('Email sent:');
-  //     res.status(200).send('Email sent successfully');
-  //   }
-  // });
+  transporter.sendMail(mailOptionsClient, (error, info) => {
+    if (error) {
+      res.status(500).json({ message: 'Error sending email' });
+    } else {
+      res.status(200).json({ message: 'Email successfully sent' });
+    }
+  });
 };
