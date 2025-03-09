@@ -178,7 +178,7 @@ exports.newOrder = (req, res) => {
 
   const mailOptionsClient = {
     from: '"RijdenX" <' + process.env.EMAIL_ONE_USER + '>',
-    to: `${orderList.email}`,
+    to: orderList.email,
     subject: `Nouvelle commande effectuée #${orderList.numCommande}`,
     html: emailContentClient,
   };
