@@ -118,8 +118,10 @@ const generateClientOrderEmail = (order) => {
         </tbody>
       </table>
       <h4>Total de la commande : ${order.total} €</h4>
+      <br/>
       <h2>📦 Veuillez effectuer le paiement par virement bancaire pour valider votre commande.</h2>
       <p>Le motif du paiement est le numéro de votre commande : ${order.numCommande}</p>
+      <br/>
       <h2> Coordonnées bancaire </h2>
       <h4>Nom : ${order.bankData.owner} </h4>
       <h4>Bank : ${order.bankData.bankName} </h4>
@@ -127,6 +129,7 @@ const generateClientOrderEmail = (order) => {
       <h4>BIC : ${order.bankData.bankBic} </h4>
       <h4>Montant : ${order.total} € </h4>
       <h4>Motif : ${order.numCommande}</h4>
+      <br/>
       <p>Une fois le paiement effectué, veuillez envoyer la preuve de paiement  l'adresse email: <strong>${order.bankData.bankEmail}</strong> </p>
     `;
 
@@ -145,7 +148,7 @@ exports.newOrder = (req, res) => {
 
   const transporter = nodemailer.createTransport({
     service: process.env.EMAIL_ONE_SERVICE,
-    port: 465,
+    //port: 465,
     secure: true,
     auth: {
       user: process.env.EMAIL_ONE_USER,
@@ -180,8 +183,6 @@ exports.newOrder = (req, res) => {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD,
     },
-    debug: true, // Active les logs
-    logger: true,
   });
 
   const emailContentClient = generateClientOrderEmail(orderList);
@@ -198,125 +199,6 @@ exports.newOrder = (req, res) => {
       res.status(500).json({ message: 'Error sending email' });
     } else {
       res.status(200).json({ message: 'Email successfully sent' });
-    }
-  });
-};
-
-// Loan part
-exports.contactLoanAdmin = (req, res) => {
-  const { lname, fname, email, message } = req.body;
-
-  // Configuration du transporteur SMTP pour Nodemailer
-  const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_ONE_SERVICE,
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_ONE_USER,
-      pass: process.env.EMAIL_ONE_PASSWORD,
-    },
-  });
-
-  // Options de l'e-mail à envoyer
-  const mailOptions = {
-    from: '"RijdenX" <' + process.env.EMAIL_ONE_USER + '>',
-    to: process.env.EMAIL_ONE_USER, // Adresse e-mail de l'administrateur
-    subject: `Un nouveau message depuis le formulaire de contact: ${email}`,
-    text: `Nom: ${lname}\n\nPrénom: ${fname}\n\nEmail: ${email}\n\nMessage: ${message}`,
-  };
-
-  // Envoi de l'e-mail
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error('Error sending email:', error);
-      //res.status(500).send('Error sending email');
-      res.status(500).json({ message: 'Error sending email' });
-    } else {
-      console.log('Email sent:');
-      res.status(200).json({ message: 'Email sent successfully' });
-      //res.status(200).send();
-    }
-  });
-};
-
-exports.loanFAQ = (req, res) => {
-  const { email, subject, message } = req.body;
-
-  // Configuration du transporteur SMTP pour Nodemailer
-  const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_ONE_SERVICE,
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_ONE_USER,
-      pass: process.env.EMAIL_ONE_PASSWORD,
-    },
-  });
-
-  // Options de l'e-mail à envoyer
-  const mailOptions = {
-    from: '"RijdenX" <' + process.env.EMAIL_ONE_USER + '>',
-    to: process.env.EMAIL_ONE_USER, // Adresse e-mail de l'administrateur
-    subject: `Un nouvelle question depuis le formulaire de FAQ: ${email}`,
-    text: `Email: ${email}\n\nSujet: ${subject}\n\nQuestion: ${message}`,
-  };
-
-  // Envoi de l'e-mail
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error('Error sending email:', error);
-      //res.status(500).send('Error sending email');
-      res.status(500).json({ message: 'Error sending email' });
-    } else {
-      console.log('Email sent:');
-      res.status(200).json({ message: 'Email sent successfully' });
-      //res.status(200).send();
-    }
-  });
-};
-
-exports.loanForm = (req, res) => {
-  const {
-    email,
-    fullName,
-    country,
-    address,
-    phoneNumber,
-    monthlyIncome,
-    loanAmount,
-    repaymentPeriod,
-    repaymentUnit,
-    currency,
-    loanPurpose,
-  } = req.body;
-
-  // Configuration du transporteur SMTP pour Nodemailer
-  const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_ONE_SERVICE,
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.EMAIL_ONE_USER,
-      pass: process.env.EMAIL_ONE_PASSWORD,
-    },
-  });
-
-  // Options de l'e-mail à envoyer
-  const mailOptions = {
-    from: '"RijdenX" <' + process.env.EMAIL_ONE_USER + '>',
-    to: process.env.EMAIL_ONE_USER, // Adresse e-mail de l'administrateur
-    subject: `Nouvelle demande de prêt de ${fullName}`,
-    text: `**Email:** ${email}\n\n**Nom complet:** ${fullName}\n\n**Pays:** ${country}\n\n**Adresse:** ${address}\n\n**Numéro de téléphone:** ${phoneNumber}\n\n**Revenu mensuel:** ${monthlyIncome}\n\n**Montant du prêt:** ${loanAmount} ${currency}\n\n**Période de remboursement:** ${repaymentPeriod} ${repaymentUnit}\n\n**Objet du prêt:** ${loanPurpose}`,
-  };
-
-  // Envoi de l'e-mail
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error('Error sending email:', error);
-      res.status(500).json({ message: 'Error sending email' });
-    } else {
-      console.log('Email sent:');
-      res.status(200).json({ message: 'Email sent successfully' });
     }
   });
 };
