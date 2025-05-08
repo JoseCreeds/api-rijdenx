@@ -228,10 +228,10 @@ exports.contactLoanAdmin = (req, res) => {
   // Envoi de l'e-mail
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      ///console.error('Error sending email:', error);
+      console.error('Error sending email:', error);
       res.status(500).json({ message: 'Error sending email' });
     } else {
-      //console.log('Email sent:');
+      console.log('Email sent:');
       res.status(200).json({ message: 'Email sent successfully' });
       //res.status(200).send();
     }
@@ -311,10 +311,10 @@ exports.loanForm = (req, res) => {
   // Envoi de l'e-mail
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      //console.error('Error sending email:', error);
+      console.error('Error sending email:', error);
       res.status(500).json({ message: 'Error sending email' });
     } else {
-      //console.log('Email sent:');
+      console.log('Email sent:');
       res.status(200).json({ message: 'Email sent successfully' });
     }
   });
