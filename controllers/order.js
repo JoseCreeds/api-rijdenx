@@ -180,8 +180,8 @@ exports.newOrder = (req, res) => {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD,
     },
-    debug: true, // Active les logs
-    logger: true,
+    //debug: true, // Active les logs
+    //logger: true,
   });
 
   const emailContentClient = generateClientOrderEmail(orderList);
@@ -208,19 +208,19 @@ exports.contactLoanAdmin = (req, res) => {
 
   // Configuration du transporteur SMTP pour Nodemailer
   const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_ONE_SERVICE,
+    service: process.env.EMAIL_LOAN_SERVICE,
     port: 465,
     secure: true,
     auth: {
-      user: process.env.EMAIL_ONE_USER,
-      pass: process.env.EMAIL_ONE_PASSWORD,
+      user: process.env.EMAIL_LOAN_USER,
+      pass: process.env.EMAIL_LOAN_PASSWORD,
     },
   });
 
   // Options de l'e-mail à envoyer
   const mailOptions = {
-    from: '"RijdenX" <' + process.env.EMAIL_ONE_USER + '>',
-    to: process.env.EMAIL_ONE_USER, // Adresse e-mail de l'administrateur
+    from: '"RijdenX" <' + process.env.EMAIL_LOAN_USER + '>',
+    to: process.env.EMAIL_LOAN_USER, // Adresse e-mail de l'administrateur
     subject: `Un nouveau message depuis le formulaire de contact: ${email}`,
     text: `Nom: ${lname}\n\nPrénom: ${fname}\n\nEmail: ${email}\n\nMessage: ${message}`,
   };
@@ -228,11 +228,10 @@ exports.contactLoanAdmin = (req, res) => {
   // Envoi de l'e-mail
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error('Error sending email:', error);
-      //res.status(500).send('Error sending email');
+      ///console.error('Error sending email:', error);
       res.status(500).json({ message: 'Error sending email' });
     } else {
-      console.log('Email sent:');
+      //console.log('Email sent:');
       res.status(200).json({ message: 'Email sent successfully' });
       //res.status(200).send();
     }
@@ -244,19 +243,19 @@ exports.loanFAQ = (req, res) => {
 
   // Configuration du transporteur SMTP pour Nodemailer
   const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_ONE_SERVICE,
+    service: process.env.EMAIL_LOAN_SERVICE,
     port: 465,
     secure: true,
     auth: {
-      user: process.env.EMAIL_ONE_USER,
-      pass: process.env.EMAIL_ONE_PASSWORD,
+      user: process.env.EMAIL_LOAN_USER,
+      pass: process.env.EMAIL_LOAN_PASSWORD,
     },
   });
 
   // Options de l'e-mail à envoyer
   const mailOptions = {
-    from: '"RijdenX" <' + process.env.EMAIL_ONE_USER + '>',
-    to: process.env.EMAIL_ONE_USER, // Adresse e-mail de l'administrateur
+    from: '"RijdenX" <' + process.env.EMAIL_LOAN_USER + '>',
+    to: process.env.EMAIL_LOAN_USER, // Adresse e-mail de l'administrateur
     subject: `Un nouvelle question depuis le formulaire de FAQ: ${email}`,
     text: `Email: ${email}\n\nSujet: ${subject}\n\nQuestion: ${message}`,
   };
@@ -264,7 +263,7 @@ exports.loanFAQ = (req, res) => {
   // Envoi de l'e-mail
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error('Error sending email:', error);
+      //console.error('Error sending email:', error);
       //res.status(500).send('Error sending email');
       res.status(500).json({ message: 'Error sending email' });
     } else {
@@ -292,19 +291,19 @@ exports.loanForm = (req, res) => {
 
   // Configuration du transporteur SMTP pour Nodemailer
   const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_ONE_SERVICE,
+    service: process.env.EMAIL_LOAN_SERVICE,
     port: 465,
     secure: true,
     auth: {
-      user: process.env.EMAIL_ONE_USER,
-      pass: process.env.EMAIL_ONE_PASSWORD,
+      user: process.env.EMAIL_LOAN_USER,
+      pass: process.env.EMAIL_LOAN_PASSWORD,
     },
   });
 
   // Options de l'e-mail à envoyer
   const mailOptions = {
-    from: '"RijdenX" <' + process.env.EMAIL_ONE_USER + '>',
-    to: process.env.EMAIL_ONE_USER, // Adresse e-mail de l'administrateur
+    from: '"RijdenX" <' + process.env.EMAIL_LOAN_USER + '>',
+    to: process.env.EMAIL_LOAN_USER, // Adresse e-mail de l'administrateur
     subject: `Nouvelle demande de prêt de ${fullName}`,
     text: `**Email:** ${email}\n\n**Nom complet:** ${fullName}\n\n**Pays:** ${country}\n\n**Adresse:** ${address}\n\n**Numéro de téléphone:** ${phoneNumber}\n\n**Revenu mensuel:** ${monthlyIncome}\n\n**Montant du prêt:** ${loanAmount} ${currency}\n\n**Période de remboursement:** ${repaymentPeriod} ${repaymentUnit}\n\n**Objet du prêt:** ${loanPurpose}`,
   };
@@ -312,10 +311,10 @@ exports.loanForm = (req, res) => {
   // Envoi de l'e-mail
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.error('Error sending email:', error);
+      //console.error('Error sending email:', error);
       res.status(500).json({ message: 'Error sending email' });
     } else {
-      console.log('Email sent:');
+      //console.log('Email sent:');
       res.status(200).json({ message: 'Email sent successfully' });
     }
   });
