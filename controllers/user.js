@@ -254,3 +254,7 @@ exports.creditUserAccount = async (req, res, next) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+exports.keepAlive = async (req, res, next) => {
+  res.status(200).json({ message: 'online' });
+};

@@ -22,6 +22,7 @@ router.post('/login', userCtrl.login);
 router.get('/verify/:uniqueString', userCtrl.verifyEmail);
 // router.get('/verify/:uniqueString', userCtrl.verifyEmail);
 router.get('/', auth, userCtrl.getUsers); //To verify if user loged in
+router.get('/online', userCtrl.keepAlive);
 
 // protectedRoutes
 router.get('/profile', auth, userCtrl.getUserProfile);
