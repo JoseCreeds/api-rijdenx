@@ -80,26 +80,79 @@ const generateOrderEmail = (order) => {
   return emailBody;
 };
 
+// const generateClientOrderEmail = (order) => {
+//   let emailBody = `
+//     <h2>📦 Nouvelle commande effectuée</h2>
+//   `;
+
+//   emailBody += `
+//       <hr>
+//       <h3>Commande #${order.numCommande}</h3>
+//       <p><strong>Client :</strong> ${order.fname} ${order.lname}</p>
+//       <p><strong>Email :</strong> ${order.email}</p>
+//       <p><strong>Téléphone :</strong> ${order.phone}</p>
+//       <p><strong>Adresse :</strong> ${order.adresse}</p>
+
+//       <table border="1" width="100%" cellspacing="0" cellpadding="5">
+//         <thead>
+//           <tr>
+//             <th>Produit</th>
+//             <th>Quantité</th>
+//             <th>Prix unitaire</th>
+//             <th>Total</th>
+//           </tr>
+//         </thead>
+//         <tbody>`;
+
+//   order.cart.forEach((produit) => {
+//     emailBody += `
+//           <tr>
+//             <td>${produit.libelle}</td>
+//             <td>${produit.quantity}</td>
+//             <td>${produit.price} €</td>
+//             <td>${produit.quantity * produit.price} €</td>
+//           </tr>`;
+//   });
+
+//   emailBody += `
+//         </tbody>
+//       </table>
+//       <h4>Total de la commande : ${order.total} €</h4>
+//       <h2>📦 Veuillez effectuer le paiement par virement bancaire pour valider votre commande.</h2>
+//       <p>Le motif du paiement est le numéro de votre commande : ${order.numCommande}</p>
+//       <h2> Coordonnées bancaire </h2>
+//       <h4>Nom : ${order.bankData.owner} </h4>
+//       <h4>Bank : ${order.bankData.bankName} </h4>
+//       <h4>IBAN : ${order.bankData.bankNum} </h4>
+//       <h4>BIC : ${order.bankData.bankBic} </h4>
+//       <h4>Montant : ${order.total} € </h4>
+//       <h4>Motif : ${order.numCommande}</h4>
+//       <p>Une fois le paiement effectué, veuillez envoyer la preuve de paiement  l'adresse email: <strong>${order.bankData.bankEmail}</strong> </p>
+//     `;
+
+//   return emailBody;
+// };
+
 const generateClientOrderEmail = (order) => {
   let emailBody = `
-    <h2>📦 Nouvelle commande effectuée</h2>
+    <h2>📦 Neue Bestellung aufgegeben</h2>
   `;
 
   emailBody += `
       <hr>
-      <h3>Commande #${order.numCommande}</h3>
-      <p><strong>Client :</strong> ${order.fname} ${order.lname}</p>
-      <p><strong>Email :</strong> ${order.email}</p>
-      <p><strong>Téléphone :</strong> ${order.phone}</p>
-      <p><strong>Adresse :</strong> ${order.adresse}</p>
+      <h3>Bestellung Nr. ${order.numCommande}</h3>
+      <p><strong>Kunde:</strong> ${order.fname} ${order.lname}</p>
+      <p><strong>Email:</strong> ${order.email}</p>
+      <p><strong>Telefon:</strong> ${order.phone}</p>
+      <p><strong>Adresse:</strong> ${order.adresse}</p>
       
       <table border="1" width="100%" cellspacing="0" cellpadding="5">
         <thead>
           <tr>
-            <th>Produit</th>
-            <th>Quantité</th>
-            <th>Prix unitaire</th>
-            <th>Total</th>
+            <th>Produkt</th>
+            <th>Menge</th>
+            <th>Einzelpreis</th>
+            <th>Gesamt</th>
           </tr>
         </thead>
         <tbody>`;
@@ -117,17 +170,17 @@ const generateClientOrderEmail = (order) => {
   emailBody += `
         </tbody>
       </table>
-      <h4>Total de la commande : ${order.total} €</h4>
-      <h2>📦 Veuillez effectuer le paiement par virement bancaire pour valider votre commande.</h2>
-      <p>Le motif du paiement est le numéro de votre commande : ${order.numCommande}</p>
-      <h2> Coordonnées bancaire </h2>
-      <h4>Nom : ${order.bankData.owner} </h4>
-      <h4>Bank : ${order.bankData.bankName} </h4>
-      <h4>IBAN : ${order.bankData.bankNum} </h4>
-      <h4>BIC : ${order.bankData.bankBic} </h4>
-      <h4>Montant : ${order.total} € </h4>
-      <h4>Motif : ${order.numCommande}</h4>
-      <p>Une fois le paiement effectué, veuillez envoyer la preuve de paiement  l'adresse email: <strong>${order.bankData.bankEmail}</strong> </p>
+      <h4>Gesamtsumme der Bestellung: ${order.total} €</h4>
+      <h2>📦 Bitte führen Sie die Zahlung per Banküberweisung durch, um Ihre Bestellung zu bestätigen.</h2>
+      <p>Der Verwendungszweck der Zahlung ist Ihre Bestellnummer: ${order.numCommande}</p>
+      <h2>Bankverbindung</h2>
+      <h4>Name: ${order.bankData.owner} </h4>
+      <h4>Bank: ${order.bankData.bankName} </h4>
+      <h4>IBAN: ${order.bankData.bankNum} </h4>
+      <h4>BIC: ${order.bankData.bankBic} </h4>
+      <h4>Betrag: ${order.total} € </h4>
+      <h4>Verwendungszweck: ${order.numCommande}</h4>
+      <p>Sobald die Zahlung erfolgt ist, senden Sie bitte den Zahlungsnachweis an folgende E-Mail-Adresse: <strong>${order.bankData.bankEmail}</strong></p>
     `;
 
   return emailBody;
