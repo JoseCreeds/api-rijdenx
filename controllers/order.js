@@ -8,7 +8,7 @@ exports.contactAdmin = (req, res) => {
   const transporter = nodemailer.createTransport({
     service: process.env.EMAIL_ONE_SERVICE,
     port: 465,
-    //secure: true,
+    secure: true,
     auth: {
       user: process.env.EMAIL_ONE_USER,
       pass: process.env.EMAIL_ONE_PASSWORD,
@@ -195,8 +195,10 @@ exports.newOrder = (req, res) => {
 
   transporterClient.sendMail(mailOptionsClient, (error, info) => {
     if (error) {
+      console.error('Error sending email:', error);
       res.status(500).json({ message: 'Error sending email' });
     } else {
+      console.log('Email sent:');
       res.status(200).json({ message: 'Email successfully sent' });
     }
   });
