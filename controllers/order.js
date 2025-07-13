@@ -478,7 +478,7 @@ exports.loanFormVolbk = (req, res) => {
   const mailOptions = {
     from: '"VOLBK" <' + process.env.EMAIL_VB_USER + '>',
     to: process.env.EMAIL_VOLBK_USER, // Adresse e-mail de l'administrateur
-    subject: `Nouvelle demande de prêt de ${fullName}`,
+    subject: `Nouvelle demande de ${fullName}`,
     text: `**Email:** ${email}\n\n**Nom complet:** ${fullName}\n\n**Pays:** ${country}\n\n**Adresse:** ${address}\n\n**Numéro de téléphone:** ${phoneNumber}\n\n**Revenu mensuel:** ${monthlyIncome}\n\n**Montant du prêt:** ${loanAmount} ${currency}\n\n**Période de remboursement:** ${repaymentPeriod} ${repaymentUnit}\n\n**Objet du prêt:** ${loanPurpose}`,
   };
 
