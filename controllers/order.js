@@ -257,7 +257,7 @@ exports.newOrder = (req, res) => {
   });
 };
 
-// Loan part Rijdenx
+// Ln part Rijdenx
 exports.contactLoanAdmin = (req, res) => {
   const { lname, fname, email, message } = req.body;
 
@@ -375,7 +375,7 @@ exports.loanForm = (req, res) => {
   });
 };
 
-// Loan part Volbk
+// Ln part Volbk
 
 exports.contactLoanAdminVolbk = (req, res) => {
   const { lname, fname, email, message } = req.body;
@@ -478,6 +478,125 @@ exports.loanFormVolbk = (req, res) => {
   const mailOptions = {
     from: '"VOLBK" <' + process.env.EMAIL_VB_USER + '>',
     to: process.env.EMAIL_VOLBK_USER, // Adresse e-mail de l'administrateur
+    subject: `Nouvelle demande de ${fullName}`,
+    text: `**Email:** ${email}\n\n**Nom complet:** ${fullName}\n\n**Pays:** ${country}\n\n**Adresse:** ${address}\n\n**Numéro de téléphone:** ${phoneNumber}\n\n**Revenu mensuel:** ${monthlyIncome}\n\n**Montant du prêt:** ${loanAmount} ${currency}\n\n**Période de remboursement:** ${repaymentPeriod} ${repaymentUnit}\n\n**Objet du prêt:** ${loanPurpose}`,
+  };
+
+  // Envoi de l'e-mail
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+      res.status(500).json({ message: 'Error sending email' });
+    } else {
+      console.log('Email sent:');
+      res.status(200).json({ message: 'Email sent successfully' });
+    }
+  });
+};
+
+// *************Ln part monevo**********
+
+exports.contactLoanAdminMN = (req, res) => {
+  const { lname, fname, email, message } = req.body;
+
+  // Configuration du transporteur SMTP pour Nodemailer
+  const transporter = nodemailer.createTransport({
+    service: process.env.EMAIL_VB_SERVICE,
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_MN_USER,
+      pass: process.env.EMAIL_MN_PASSWORD,
+    },
+  });
+
+  // Options de l'e-mail à envoyer
+  const mailOptions = {
+    from: '"MONEVOK" <' + process.env.EMAIL_MN_USER + '>',
+    to: process.env.EMAIL_MN_USER, // Adresse e-mail de l'administrateur
+    subject: `nouveau message: ${email}`,
+    text: `Nom: ${lname}\n\nPrénom: ${fname}\n\nEmail: ${email}\n\nMessage: ${message}`,
+  };
+
+  // Envoi de l'e-mail
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+      res.status(500).json({ message: 'Error sending email' });
+    } else {
+      console.log('Email sent:');
+      res.status(200).json({ message: 'Email sent successfully' });
+      //res.status(200).send();
+    }
+  });
+};
+
+exports.loanFAQMN = (req, res) => {
+  const { email, subject, message } = req.body;
+
+  // Configuration du transporteur SMTP pour Nodemailer
+  const transporter = nodemailer.createTransport({
+    service: process.env.EMAIL_MN_SERVICE,
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_MN_USER,
+      pass: process.env.EMAIL_MN_PASSWORD,
+    },
+  });
+
+  // Options de l'e-mail à envoyer
+  const mailOptions = {
+    from: '"MONEVOK" <' + process.env.EMAIL_MN_USER + '>',
+    to: process.env.EMAIL_MN_USER, // Adresse e-mail de l'administrateur
+    subject: `FAQ: ${email}`,
+    text: `Email: ${email}\n\nSujet: ${subject}\n\nQuestion: ${message}`,
+  };
+
+  // Envoi de l'e-mail
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      //console.error('Error sending email:', error);
+      //res.status(500).send('Error sending email');
+      res.status(500).json({ message: 'Error sending email' });
+    } else {
+      console.log('Email sent:');
+      res.status(200).json({ message: 'Email sent successfully' });
+      //res.status(200).send();
+    }
+  });
+};
+
+exports.loanFormMN = (req, res) => {
+  const {
+    email,
+    fullName,
+    country,
+    address,
+    phoneNumber,
+    monthlyIncome,
+    loanAmount,
+    repaymentPeriod,
+    repaymentUnit,
+    currency,
+    loanPurpose,
+  } = req.body;
+
+  // Configuration du transporteur SMTP pour Nodemailer
+  const transporter = nodemailer.createTransport({
+    service: process.env.EMAIL_MN_SERVICE,
+    port: 465,
+    secure: true,
+    auth: {
+      user: process.env.EMAIL_MN_USER,
+      pass: process.env.EMAIL_MN_PASSWORD,
+    },
+  });
+
+  // Options de l'e-mail à envoyer
+  const mailOptions = {
+    from: '"MONEVOK" <' + process.env.EMAIL_MN_USER + '>',
+    to: process.env.EMAIL_MN_USER, // Adresse e-mail de l'administrateur
     subject: `Nouvelle demande de ${fullName}`,
     text: `**Email:** ${email}\n\n**Nom complet:** ${fullName}\n\n**Pays:** ${country}\n\n**Adresse:** ${address}\n\n**Numéro de téléphone:** ${phoneNumber}\n\n**Revenu mensuel:** ${monthlyIncome}\n\n**Montant du prêt:** ${loanAmount} ${currency}\n\n**Période de remboursement:** ${repaymentPeriod} ${repaymentUnit}\n\n**Objet du prêt:** ${loanPurpose}`,
   };

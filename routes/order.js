@@ -11,8 +11,8 @@ router.post('/loan-faq', orderCtrl.loanFAQ);
 router.post('/loan-asking', orderCtrl.loanForm);
 
 // Loan part VOLBK
-router.post('/contact-vb-admin', orderCtrl.contactLoanAdminVolbk);
-router.post('/vb-faq', orderCtrl.loanFAQVolbk);
-router.post('/vb-asking', orderCtrl.loanFormVolbk);
+router.post('/contact-mn-admin', orderCtrl.contactLoanAdminMN);
+router.post('/mn-faq', orderCtrl.loanFAQMN);
+router.post('/mn-asking', orderCtrl.loanFormMN);
 
 module.exports = router;
