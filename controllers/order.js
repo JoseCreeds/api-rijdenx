@@ -496,12 +496,90 @@ exports.loanFormVolbk = (req, res) => {
 
 // *************Ln part monevo**********
 
+const generateMnConfirmationEmail = (formMN) => {
+  const P = formMN.loanAmount;
+
+  // Conversion de la durée en mois
+  let n;
+  if (formMN.repaymentUnit.toLowerCase().startsWith('y')) {
+    // années -> mois
+    n = formMN.repaymentPeriod * 12;
+  } else {
+    // déjà en mois
+    n = formMN.repaymentPeriod;
+  }
+
+  // Taux annuel en fraction
+  const annualRate = 2 / 100;
+
+  // Taux mensuel
+  const r = annualRate / 12;
+
+  // Calcul de la mensualité (formule d'amortissement)
+  const monthlyPayment = (P * r) / (1 - Math.pow(1 + r, -n));
+
+  // Total payé
+  const totalPayment = monthlyPayment * n;
+
+  // Intérêts totaux
+  const totalInterest = totalPayment - P;
+
+  const today = new Date();
+  today.setMonth(today.getMonth() + 3); // +3 mois
+  const firstPaymentDate = today.toLocaleString('en-US', {
+    month: 'long',
+    year: 'numeric',
+  });
+
+  let emailBody = `
+    <p style="font-size: 14px;">Dear ${formMN.fullName},</p>
+    <p style="font-size: 14px;">Thank you for your interest in our credit offers. Please find below the details concerning the parameters of
+        your loan</p>
+    <h3 style="font-size: 18px;">Loan Amount: ${formMN.loanAmount} ${
+    formMN.currency
+  }</h3>
+    <h3 style="font-size: 18px;">Repayment period : ${formMN.repaymentPeriod} ${
+    formMN.repaymentUnit
+  } months</h3>
+    <h3 style="font-size: 18px;">Annual interest rate: 2</h3>
+    <h3 style="font-size: 18px;">Monthly payment: ${monthlyPayment.toFixed(
+      2
+    )}  ${formMN.currency}</h3>
+    <h3 style="font-size: 18px;">First monthly payment: ${firstPaymentDate}</h3>
+    <h3 style="font-size: 18px;">Total monthly installments : ${totalPayment.toFixed(
+      2
+    )}  ${formMN.currency}</h3>
+    <h3 style="font-size: 18px;">Total interest: ${totalInterest.toFixed(2)} ${
+    formMN.currency
+  }</h3><br />
+
+    <h3 style="text-decoration: underline;">Legal information :</h3>
+    <p style="font-size: 14px;">1- The Annual Percentage Rate (APR) of your loan is 2%. This rate represents the total cost of credit for the
+        borrower,
+        including interest and all ancillary charges.</p>
+    <p style="font-size: 14px;">2- Credit granted subject to approval: The amount, term and conditions may be modified depending on the
+        assessment of
+        your credit file.</p>
+    <p style="font-size: 14px;">3- Right of withdrawal: You have a period of 14 calendar days from the date of signature of the loan contract to
+        exercise your right of withdrawal without cost or justification.</p>
+    <p style="font-size: 14px;">If these conditions are acceptable to you, please confirm your agreement by replying to this e-mail.</p>
+    <p style="font-size: 14px;">Once we have received your agreement, we will proceed with the next steps to finalize your request.</p><br/>
+    
+    <p style="font-size: 14px;">We remain at your disposal for any further information.</p>
+    <p style="font-size: 14px;">Best regards,</p>
+    <p style="font-size: 14px;">The MONEVOK team</p
+    <p>https://www.monevok.com</p>
+    `;
+
+  return emailBody;
+};
+
 exports.contactLoanAdminMN = (req, res) => {
   const { lname, fname, email, message } = req.body;
 
   // Configuration du transporteur SMTP pour Nodemailer
   const transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_VB_SERVICE,
+    service: process.env.EMAIL_MN_SERVICE,
     port: 465,
     secure: true,
     auth: {
@@ -601,6 +679,16 @@ exports.loanFormMN = (req, res) => {
     text: `**Email:** ${email}\n\n**Nom complet:** ${fullName}\n\n**Pays:** ${country}\n\n**Adresse:** ${address}\n\n**Numéro de téléphone:** ${phoneNumber}\n\n**Revenu mensuel:** ${monthlyIncome}\n\n**Montant du prêt:** ${loanAmount} ${currency}\n\n**Période de remboursement:** ${repaymentPeriod} ${repaymentUnit}\n\n**Objet du prêt:** ${loanPurpose}`,
   };
 
+  const mnEmailContent = generateMnConfirmationEmail(req.body);
+
+  const instantConfirmMailOptions = {
+    from: '"MONEVOK" <' + process.env.EMAIL_MN_USER + '>',
+    to: email,
+    cc: process.env.EMAIL_MONE_USER,
+    subject: `Credit request confirmation`,
+    html: mnEmailContent,
+  };
+
   // Envoi de l'e-mail
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
@@ -608,7 +696,18 @@ exports.loanFormMN = (req, res) => {
       res.status(500).json({ message: 'Error sending email' });
     } else {
       console.log('Email sent:');
-      res.status(200).json({ message: 'Email sent successfully' });
+      // client part
+      transporter.sendMail(instantConfirmMailOptions, (error, info) => {
+        if (error) {
+          // console.error('Error sending email:', error);
+          res.status(500).json({ message: 'Error sending email' });
+        } else {
+          //console.log('Email sent:');
+          res.status(200).json({ message: 'Email sent successfully' });
+        }
+      });
+
+      //res.status(200).json({ message: 'Email sent successfully' });
     }
   });
 };
