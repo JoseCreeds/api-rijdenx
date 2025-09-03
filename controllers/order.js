@@ -551,7 +551,7 @@ const generateMnConfirmationEmail = (formMN) => {
     )}  ${formMN.currency}</h3>
     <h3 style="font-size: 18px;">Total interest: ${totalInterest.toFixed(2)} ${
     formMN.currency
-  }</h3><br />
+  }</h3>
 
     <h3 style="text-decoration: underline;">Legal information :</h3>
     <p style="font-size: 14px;">1- The Annual Percentage Rate (APR) of your loan is 2%. This rate represents the total cost of credit for the
