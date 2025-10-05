@@ -448,7 +448,7 @@ exports.loanFAQVolbk = (req, res) => {
   });
 };
 
-exports.loanFormVolbk = async (req, res) => {
+exports.loanFormVolbk = (req, res) => {
   const {
     email,
     fullName,
@@ -476,40 +476,22 @@ exports.loanFormVolbk = async (req, res) => {
 
   // Options de l'e-mail à envoyer
   const mailOptions = {
-    from: 'VOLBK <onboarding@resend.dev>',
-    //from: '"VOLBK" <' + process.env.EMAIL_VB_USER + '>',
-    to: process.env.EMAIL_VB_USER, // Adresse e-mail de l'administrateur
+    from: '"VOLBK" <' + process.env.EMAIL_VB_USER + '>',
+    to: process.env.EMAIL_VOLBK_USER, // Adresse e-mail de l'administrateur
     subject: `Nouvelle demande de ${fullName}`,
     text: `**Email:** ${email}\n\n**Nom complet:** ${fullName}\n\n**Pays:** ${country}\n\n**Adresse:** ${address}\n\n**Numéro de téléphone:** ${phoneNumber}\n\n**Revenu mensuel:** ${monthlyIncome}\n\n**Montant du prêt:** ${loanAmount} ${currency}\n\n**Période de remboursement:** ${repaymentPeriod} ${repaymentUnit}\n\n**Objet du prêt:** ${loanPurpose}`,
   };
 
   // Envoi de l'e-mail
-  // transporter.sendMail(mailOptions, (error, info) => {
-  //   if (error) {
-  //     console.error('Error sending email:', error);
-  //     res.status(500).json({ message: 'Error sending email' });
-  //   } else {
-  //     console.log('Email sent:');
-  //     res.status(200).json({ message: 'Email sent successfully' });
-  //   }
-  // });
-
-  let response1 = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${process.env.RESEND_API_KEY_BK}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(mailOptions),
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+      res.status(500).json({ message: 'Error sending email' });
+    } else {
+      console.log('Email sent:');
+      res.status(200).json({ message: 'Email sent successfully' });
+    }
   });
-
-  if (!response1.ok) {
-    console.error('Error sending email:', error);
-    res.status(500).json({ message: 'Error sending email' });
-  } else {
-    console.log('Email sent:');
-    res.status(200).json({ message: 'Email sent successfully' });
-  }
 };
 
 // *************Ln part monevo**********

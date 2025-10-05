@@ -11,11 +11,14 @@ require('dotenv').config();
 // console.log(process.env);
 
 // Configuration for mongoDB
-const mongoose = require('mongoose');
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connexion à mongoDB réussie !'))
-  .catch((error) => console.log({ error }));
+// const mongoose = require('mongoose');
+// mongoose
+//   .connect(process.env.MONGODB_URI, {
+//     useNewUrlParser: true,
+//     useUnifiedTopology: true,
+//   })
+//   .then(() => console.log('Connexion à mongoDB réussie !'))
+//   .catch((error) => console.log({ error }));
 
 const userRoutes = require('./routes/user');
 const shopRoutes = require('./routes/order');
